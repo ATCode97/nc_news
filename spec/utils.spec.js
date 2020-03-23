@@ -1,12 +1,12 @@
-const { expect } = require('chai');
+const { expect } = require("chai");
 const {
   formatDates,
   makeRefObj,
-  formatComments,
-} = require('../db/utils/utils');
+  formatComments
+} = require("../db/utils/utils");
 
-describe('formatDates', () => {});
+describe("formatDates", () => {});
 
-describe('makeRefObj', () => {});
+describe("makeRefObj", () => {});
 
-describe('formatComments', () => {});
+describe("formatComments", () => {});
