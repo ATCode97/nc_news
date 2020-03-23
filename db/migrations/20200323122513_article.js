@@ -13,5 +13,5 @@ exports.up = function(knex) {
 
 exports.down = function(knex) {
   console.log("dropping article table");
-  return knex.schema.dropTable("article");
+  return knex.schema.dropTable("articles");
 };
