@@ -59,7 +59,7 @@ describe("formatDates", () => {
         votes: 100
       }
     ];
-    const actual = formatDates(input);
+    formatDates(input);
 
     expect(input).to.eql([
       {
