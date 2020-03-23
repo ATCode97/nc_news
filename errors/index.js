@@ -1,5 +1,5 @@
 exports.handles500s = (err, req, res, next) => {
-  // console.log(err, "<---- ERROR from index");
+  console.log(err, "<---- ERROR from index");
   res.status(500).send({ msg: "internal server error" });
 };
 

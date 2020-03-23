@@ -26,5 +26,26 @@ describe("/api", () => {
           expect(topics[0]).to.be.an("object");
         });
     });
+    it("status 200: response object is an array with the correct key", () => {
+      return request(app)
+        .get("/api/topics")
+        .expect(200)
+        .then(({ body: { topics } }) => {
+          expect(topics[0]).to.be.an("object");
+          expect(topics[0]).to.contains.keys("slug", "description");
+        });
+    });
+  });
+  describe("/users", () => {
+    describe("/:username", () => {
+      it("status 200: for a successful get request by id", () => {
+        return request(app)
+          .get("/api/users/icellusedkars")
+          .expect(200)
+          .then(({ body: { user } }) => {
+            expect(user.username).to.equal("icellusedkars");
+          });
+      });
+    });
   });
 });
