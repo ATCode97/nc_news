@@ -6,6 +6,12 @@ exports.fetchUserByUsername = username => {
     .from("users")
     .where("users.username", "=", username)
     .then(res => {
+      if (res.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "user doesn't exist"
+        });
+      }
       return res[0];
     });
 };
