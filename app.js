@@ -5,6 +5,7 @@ const {
   handlesInvalidPaths,
   handlesCustomErrors,
   handles400s,
+  handles422s,
   handles500s
 } = require("./errors");
 
@@ -17,6 +18,8 @@ app.all("/*", handlesInvalidPaths);
 app.use(handlesCustomErrors);
 
 app.use(handles400s);
+
+app.use(handles422s);
 
 app.use(handles500s);
 

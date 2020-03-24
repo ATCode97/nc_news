@@ -36,3 +36,18 @@ exports.updateArticleById = (articleId, newVotes) => {
       return res[0];
     });
 };
+
+exports.addCommentToArticle = (articleId, comment) => {
+  const newObj = {};
+  newObj.author = comment.username;
+  newObj.body = comment.body;
+  newObj.article_id = articleId;
+
+  return connection
+    .from("comments")
+    .insert(newObj)
+    .returning("*")
+    .then(res => {
+      return res[0];
+    });
+};

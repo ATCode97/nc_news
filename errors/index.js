@@ -1,4 +1,5 @@
 exports.handlesCustomErrors = (err, req, res, next) => {
+  console.log(err);
   const { status, msg } = err;
   if (status) res.status(status).send({ msg });
   else next(err);
@@ -9,6 +10,15 @@ exports.handles400s = (err, req, res, next) => {
   const errors400 = ["22P02"];
 
   if (errors400.includes(code)) res.status(400).send({ msg: "bad request" });
+  else next(err);
+};
+
+exports.handles422s = (err, req, res, next) => {
+  const { code } = err;
+  const errors400 = ["23503"];
+
+  if (errors400.includes(code))
+    res.status(422).send({ msg: "unprocessable entity" });
   else next(err);
 };
 

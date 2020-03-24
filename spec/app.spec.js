@@ -197,6 +197,96 @@ describe("/api", () => {
             });
         });
       });
+      describe("invalid methods", () => {
+        it("status 405: methods not allowed", () => {
+          const invalidMethods = ["post", "delete"];
+          const promiseArray = invalidMethods.map(method => {
+            return request(app)
+              [method]("/api/articles/2")
+              .expect(405)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("method not allowed");
+              });
+          });
+          return Promise.all(promiseArray);
+        });
+      });
+
+      describe("/comments", () => {
+        describe("POST method", () => {
+          it("status 201: will post successfully", () => {
+            return request(app)
+              .post("/api/articles/2/comments")
+              .send({
+                username: "icellusedkars",
+                body: "buzz light year to the rescue"
+              })
+              .expect(201)
+              .expect(({ body: { comment } }) => {
+                expect(comment.comment_id).to.equal(19);
+                expect(comment.author).to.equal("icellusedkars");
+                expect(comment.article_id).to.equal(2);
+                expect(comment.votes).to.equal(0);
+                expect(comment.body).to.equal("buzz light year to the rescue");
+                expect(comment).to.contain.keys("created_at");
+              });
+          });
+          it("status 201: will successfully post despite the body have an extra key", () => {
+            return request(app)
+              .post("/api/articles/2/comments")
+              .expect(201)
+              .send({
+                username: "icellusedkars",
+                body: "buzz light year to the rescue",
+                void: "void"
+              })
+              .expect(({ body: { comment } }) => {
+                expect(comment.comment_id).to.equal(19);
+                expect(comment.author).to.equal("icellusedkars");
+                expect(comment.article_id).to.equal(2);
+                expect(comment.votes).to.equal(0);
+                expect(comment.body).to.equal("buzz light year to the rescue");
+                expect(comment).to.contain.keys("created_at");
+              });
+          });
+          it("status 400: the article id in path isn't a valid data type", () => {
+            return request(app)
+              .post("/api/articles/invalid/comments")
+              .send({
+                username: 999,
+                body: "buzz light year to the rescue"
+              })
+              .expect(400)
+              .expect(({ body: { msg } }) => {
+                expect(msg).to.equal("bad request");
+              });
+          });
+          it("status 422: posting with an invalid datatype", () => {
+            return request(app)
+              .post("/api/articles/2/comments")
+              .expect(422)
+              .send({
+                username: 999,
+                body: "buzz light year to the rescue"
+              })
+              .expect(({ body: { msg } }) => {
+                expect(msg).to.equal("unprocessable entity");
+              });
+          });
+          it("status 422: valid article_id request, BUT it doesn't exist", () => {
+            return request(app)
+              .post("/api/articles/50/comments")
+              .send({
+                username: "icellusedkars",
+                body: "buzz light year to the rescue"
+              })
+              .expect(422)
+              .expect(({ body: { msg } }) => {
+                expect(msg).to.equal("unprocessable entity");
+              });
+          });
+        });
+      });
     });
   });
 });
