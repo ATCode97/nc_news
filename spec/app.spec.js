@@ -114,7 +114,7 @@ describe("/api", () => {
                 "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me."
               );
               expect(article.votes).to.equal(0);
-              // expect(article.created_at instanceof Date).to.equal(true);
+              expect(article).to.contain.keys("created_at");
             });
         });
         it("status 200: response object will have a key of comment count with the correct count", () => {
@@ -161,6 +161,24 @@ describe("/api", () => {
               expect(article.votes).to.equals(-1);
             });
         });
+        it("status 200: will successfully patch despite the body have more than one key", () => {
+          return request(app)
+            .patch("/api/articles/2")
+            .send({ inc_votes: 6, name: "mitch" })
+            .expect(200)
+            .then(({ body: { article } }) => {
+              expect(article.votes).to.equals(6);
+            });
+        });
+        it("status 200: the request body is empty the response wouldn't change", () => {
+          return request(app)
+            .patch("/api/articles/2")
+            .send({})
+            .expect(200)
+            .then(({ body: { article } }) => {
+              expect(article.votes).to.equals(1);
+            });
+        });
         it("status 404: valid article_id request, BUT it doesn't exist", () => {
           return request(app)
             .patch("/api/articles/999999")
@@ -169,11 +187,11 @@ describe("/api", () => {
               expect(msg).to.equal("article for update, doesn't exist");
             });
         });
-        it.only("status 400: the amount to increment by isn't a valid data type", () => {
+        it("status 400: the amount to increment by isn't a valid data type", () => {
           return request(app)
             .patch("/api/articles/2")
             .send({ inc_votes: "abc" })
-            .expect(200)
+            .expect(400)
             .expect(({ body: { msg } }) => {
               expect(msg).to.equal("bad request");
             });
