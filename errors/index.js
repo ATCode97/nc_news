@@ -4,7 +4,14 @@ exports.handlesCustomErrors = (err, req, res, next) => {
   else next(err);
 };
 
-exports.handles400s = (err, req, res, next) => {};
+exports.handles400s = (err, req, res, next) => {
+  const { code } = err;
+  const errors400 = ["22P02"];
+  console.log(err);
+
+  if (errors400.includes(code)) res.status(400).send({ msg: "bad request" });
+  else next(err);
+};
 
 exports.handles500s = (err, req, res, next) => {
   console.log(err, "<---- ERROR from index");

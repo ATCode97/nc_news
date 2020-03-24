@@ -1,5 +1,6 @@
 const express = require("express");
 const apiRouter = require("./routes/apiRouter");
+const app = express();
 const {
   handlesInvalidPaths,
   handlesCustomErrors,
@@ -7,7 +8,7 @@ const {
   handles500s
 } = require("./errors");
 
-const app = express();
+app.use(express.json());
 
 app.use("/api", apiRouter);
 
