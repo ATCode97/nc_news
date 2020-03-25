@@ -3,9 +3,12 @@ const {
   getArticleById,
   patchArticleById,
   postCommentByArticleId,
-  getCommentByArticleId
+  getCommentByArticleId,
+  getAllArticles
 } = require("../controllers/articles");
 const { handles405s } = require("../errors");
+
+articlesRouter.route("/").get(getAllArticles);
 
 articlesRouter
   .route("/:article_id")

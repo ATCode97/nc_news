@@ -2,7 +2,8 @@ const {
   fetchArticleById,
   updateArticleById,
   addCommentToArticle,
-  fetchCommentByArticleId
+  fetchCommentByArticleId,
+  fetchAllArticles
 } = require("../models/articles");
 
 exports.getArticleById = (req, res, next) => {
@@ -41,6 +42,14 @@ exports.getCommentByArticleId = (req, res, next) => {
   fetchCommentByArticleId(id, req.query)
     .then(comments => {
       res.status(200).send({ comments });
+    })
+    .catch(next);
+};
+
+exports.getAllArticles = (req, res, next) => {
+  fetchAllArticles(req.query)
+    .then(articles => {
+      res.status(200).send({ articles });
     })
     .catch(next);
 };
