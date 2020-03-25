@@ -100,7 +100,7 @@ describe("/api", () => {
     });
   });
   describe("/articles", () => {
-    describe.only("GET method", () => {
+    describe("GET method", () => {
       it("status 200: successfully get all articles", () => {
         return request(app)
           .get("/api/articles")
@@ -502,9 +502,63 @@ describe("/api", () => {
       });
     });
   });
-  describe("/comments", () => {
+  describe.only("/comments", () => {
     describe("/:comment_id", () => {
-      describe("PATCH method", () => {});
+      describe("PATCH method", () => {
+        it("status 200: will send this status code for a successful patch to increase vote", () => {
+          return request(app)
+            .patch("/api/comments/2")
+            .send({ inc_votes: 10 })
+            .expect(200)
+            .then(({ body: { comment } }) => {
+              expect(comment.votes).to.equals(24);
+            });
+        });
+        it("status 200: will send this status code for a successful patch to decrease vote", () => {
+          return request(app)
+            .patch("/api/comments/2")
+            .send({ inc_votes: -10 })
+            .expect(200)
+            .then(({ body: { comment } }) => {
+              expect(comment.votes).to.equals(4);
+            });
+        });
+        it("status 200: will successfully patch despite the body have more than one key", () => {
+          return request(app)
+            .patch("/api/comments/2")
+            .send({ inc_votes: 10, name: "mitch" })
+            .expect(200)
+            .then(({ body: { comment } }) => {
+              expect(comment.votes).to.equals(24);
+            });
+        });
+        it("status 200: the request body is empty the response wouldn't change", () => {
+          return request(app)
+            .patch("/api/comments/2")
+            .send({})
+            .expect(200)
+            .then(({ body: { comment } }) => {
+              expect(comment.votes).to.equals(15);
+            });
+        });
+        it("status 404: valid comment_id request, BUT it doesn't exist", () => {
+          return request(app)
+            .patch("/api/comments/999999")
+            .expect(404)
+            .expect(({ body: { msg } }) => {
+              expect(msg).to.equal("comment_id for update doesn't exist");
+            });
+        });
+        it("status 400: the amount to increment by isn't a valid data type", () => {
+          return request(app)
+            .patch("/api/comments/2")
+            .send({ inc_votes: "abc" })
+            .expect(400)
+            .expect(({ body: { msg } }) => {
+              expect(msg).to.equal("bad request");
+            });
+        });
+      });
     });
   });
 });
