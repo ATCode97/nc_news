@@ -4,6 +4,7 @@ const app = require("../app");
 const request = require("supertest");
 const chai = require("chai");
 const { expect } = chai;
+chai.use(require("sams-chai-sorted"));
 
 describe("/api", () => {
   beforeEach(() => connection.seed.run());
@@ -283,6 +284,87 @@ describe("/api", () => {
               .expect(422)
               .expect(({ body: { msg } }) => {
                 expect(msg).to.equal("unprocessable entity");
+              });
+          });
+        });
+        describe.only("GET method", () => {
+          it("status 200: will successfully get comment by article id", () => {
+            return request(app)
+              .get("/api/articles/1/comments")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments.length).to.equal(13);
+                expect(comments[0]).to.contain.keys(
+                  "comment_id",
+                  "votes",
+                  "created_at",
+                  "author",
+                  "body"
+                );
+              });
+          });
+          it("status 200: can sort queries by created_at in descending order by default", () => {
+            return request(app)
+              .get("/api/articles/1/comments?sort_by=created_at")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).to.be.descendingBy("created_at");
+              });
+          });
+          it("status 200: can sort queries by comment_id", () => {
+            return request(app)
+              .get("/api/articles/1/comments?sort_by=comment_id")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).to.be.descendingBy("comment_id");
+              });
+          });
+          it("status 200: can sort queries by votes", () => {
+            return request(app)
+              .get("/api/articles/1/comments?sort_by=votes")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).to.be.descendingBy("votes");
+              });
+          });
+          it("status 200: can sort queries by author", () => {
+            return request(app)
+              .get("/api/articles/1/comments?sort_by=author")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).to.be.descendingBy("author");
+              });
+          });
+          it("status 200: can sort queries by body", () => {
+            return request(app)
+              .get("/api/articles/1/comments?sort_by=body")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).to.be.descendingBy("body");
+              });
+          });
+          it("status 200: can set sort order to ascending", () => {
+            return request(app)
+              .get("/api/articles/1/comments?order=asc")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).to.be.ascendingBy("created_at");
+              });
+          });
+          it("status 400: return an error message if met with an invalid sort_by request", () => {
+            return request(app)
+              .get("/api/articles/1/comments?sort_by=invalid")
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("bad request");
+              });
+          });
+          it.only("status 404: valid article_id request, BUT it doesn't exist ", () => {
+            return request(app)
+              .get("/api/articles/50/comments")
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("article_id doesn't exist");
               });
           });
         });

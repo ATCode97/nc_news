@@ -7,7 +7,7 @@ exports.handlesCustomErrors = (err, req, res, next) => {
 
 exports.handles400s = (err, req, res, next) => {
   const { code } = err;
-  const errors400 = ["22P02"];
+  const errors400 = ["22P02", "42703"];
 
   if (errors400.includes(code)) res.status(400).send({ msg: "bad request" });
   else next(err);

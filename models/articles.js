@@ -51,3 +51,30 @@ exports.addCommentToArticle = (articleId, comment) => {
       return res[0];
     });
 };
+
+exports.fetchCommentByArticleId = (
+  articleId,
+  { sort_by = "created_at", order = "desc" }
+) => {
+  return connection
+    .select("comments.*")
+    .from("comments")
+    .leftJoin("articles", "comments.article_id", "=", "articles.article_id")
+    .groupBy("comments.comment_id")
+    .where("comments.article_id", "=", articleId)
+    .orderBy(sort_by, order)
+    .then(res => {
+      if (res.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "article_id doesn't exist"
+        });
+      }
+      return res;
+    });
+};
+
+// SELECT comments.* FROM comments
+// LEFT JOIN articles
+//ON comments.article_id = articles.article_id
+// GROUP BY comments.comment_id;
