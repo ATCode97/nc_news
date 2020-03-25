@@ -99,7 +99,7 @@ describe("/api", () => {
       });
     });
   });
-  describe.only("/articles", () => {
+  describe("/articles", () => {
     describe.only("GET method", () => {
       it("status 200: successfully get all articles", () => {
         return request(app)
@@ -213,6 +213,23 @@ describe("/api", () => {
             });
           });
       });
+      it("status 400: return an error message if met with an invalid sort_by request", () => {
+        return request(app)
+          .get("/api/articles?sort_by=invalid")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("bad request");
+          });
+      });
+      xit("status 400: return an error message if met with an invalid order request", () => {
+        return request(app)
+          .get("/api/articles?order=invalid")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("bad request");
+          });
+      });
+      xit("status 400: author or topic that doesn't exist", () => {}); // one that doesn't clash with author that hasnt written?
     });
     describe("/:article_id", () => {
       describe("GET method", () => {
@@ -483,6 +500,11 @@ describe("/api", () => {
           });
         });
       });
+    });
+  });
+  describe("/comments", () => {
+    describe("/:comment_id", () => {
+      describe("PATCH method", () => {});
     });
   });
 });

@@ -85,6 +85,10 @@ exports.fetchAllArticles = ({
   author,
   topic
 }) => {
+  // if (order !== "desc" || "asc") {
+  //   order = "desc";
+  // }
+
   return connection
     .select("articles.*")
     .from("articles")
