@@ -17,3 +17,9 @@ exports.updateCommentById = (commentId, votes) => {
       return res[0];
     });
 };
+
+exports.removeCommentById = commentId => {
+  return connection
+    .from("comments")
+    .where("comments.comment_id", "=", commentId);
+};

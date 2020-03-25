@@ -559,6 +559,13 @@ describe("/api", () => {
             });
         });
       });
+      describe("DELETE method", () => {
+        it("status 204: for a successful delete request", () => {
+          return request(app)
+            .delete("/api/comments/2")
+            .expect(204);
+        });
+      });
     });
   });
 });

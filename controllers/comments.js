@@ -1,4 +1,4 @@
-const { updateCommentById } = require("../models/comments");
+const { updateCommentById, removeCommentById } = require("../models/comments");
 
 exports.patchCommentById = (req, res, next) => {
   const { comment_id: Id } = req.params;
@@ -7,6 +7,15 @@ exports.patchCommentById = (req, res, next) => {
   updateCommentById(Id, votes)
     .then(comment => {
       res.status(200).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id: Id } = req.params;
+  removeCommentById(Id)
+    .then(() => {
+      res.sendStatus(204);
     })
     .catch(next);
 };
