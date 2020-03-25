@@ -231,6 +231,20 @@ describe("/api", () => {
       });
       xit("status 400: author or topic that doesn't exist", () => {}); // one that doesn't clash with author that hasnt written?
     });
+    describe("invalid methods", () => {
+      it("status 405: methods not allowed", () => {
+        const invalidMethods = ["post", "patch", "delete", "put"];
+        const promiseArray = invalidMethods.map(method => {
+          return request(app)
+            [method]("/api/articles")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("method not allowed");
+            });
+        });
+        return Promise.all(promiseArray);
+      });
+    });
     describe("/:article_id", () => {
       describe("GET method", () => {
         it("status 200: for a successful get request by article id", () => {
@@ -499,10 +513,38 @@ describe("/api", () => {
               });
           });
         });
+        describe("invalid methods", () => {
+          it("status 405: methods not allowed", () => {
+            const invalidMethods = ["patch", "delete", "put"];
+            const promiseArray = invalidMethods.map(method => {
+              return request(app)
+                [method]("/api/articles/1/comments")
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("method not allowed");
+                });
+            });
+            return Promise.all(promiseArray);
+          });
+        });
       });
     });
   });
-  describe.only("/comments", () => {
+  describe("/comments", () => {
+    describe("invalid methods", () => {
+      it("status 405: methods not allowed", () => {
+        const invalidMethods = ["post", "get", "put", "patch", "delete"];
+        const promiseArray = invalidMethods.map(method => {
+          return request(app)
+            [method]("/api/comments")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("method not allowed");
+            });
+        });
+        return Promise.all(promiseArray);
+      });
+    });
     describe("/:comment_id", () => {
       describe("PATCH method", () => {
         it("status 200: will send this status code for a successful patch to increase vote", () => {
@@ -564,6 +606,20 @@ describe("/api", () => {
           return request(app)
             .delete("/api/comments/2")
             .expect(204);
+        });
+      });
+      describe("invalid methods", () => {
+        it("status 405: methods not allowed", () => {
+          const invalidMethods = ["post", "get", "put"];
+          const promiseArray = invalidMethods.map(method => {
+            return request(app)
+              [method]("/api/comments/2")
+              .expect(405)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("method not allowed");
+              });
+          });
+          return Promise.all(promiseArray);
         });
       });
     });

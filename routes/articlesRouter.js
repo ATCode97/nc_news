@@ -8,7 +8,10 @@ const {
 } = require("../controllers/articles");
 const { handles405s } = require("../errors");
 
-articlesRouter.route("/").get(getAllArticles);
+articlesRouter
+  .route("/")
+  .get(getAllArticles)
+  .all(handles405s);
 
 articlesRouter
   .route("/:article_id")
@@ -19,6 +22,7 @@ articlesRouter
 articlesRouter
   .route("/:article_id/comments")
   .post(postCommentByArticleId)
-  .get(getCommentByArticleId);
+  .get(getCommentByArticleId)
+  .all(handles405s);
 
 module.exports = articlesRouter;
