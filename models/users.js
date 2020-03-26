@@ -5,14 +5,14 @@ exports.fetchUserByUsername = username => {
     .select("*")
     .from("users")
     .where("users.username", "=", username)
-    .then(res => {
-      if (res.length === 0) {
+    .then(username => {
+      if (username.length === 0) {
         return Promise.reject({
           status: 404,
           msg: "username doesn't exist"
         });
       }
-      return res[0];
+      return username[0];
     });
 };
 
@@ -21,8 +21,8 @@ exports.checkIfAuthorExists = ({ author }) => {
     return connection("users")
       .first()
       .where("users.username", "=", author)
-      .then(res => {
-        if (res === undefined) {
+      .then(author => {
+        if (author === undefined) {
           return Promise.reject({
             status: 404,
             msg: "author doesn't exist"

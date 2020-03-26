@@ -18,7 +18,7 @@ describe("/api", () => {
       });
   });
   describe("/topics", () => {
-    describe.only("GET methods", () => {
+    describe("GET methods", () => {
       it("status 200: response object is an object in an array with the correct key and array has the correct length", () => {
         return request(app)
           .get("/api/topics")
@@ -245,19 +245,6 @@ describe("/api", () => {
             expect(msg).to.equal("topic doesn't exist");
           });
       });
-      xit("status 400: return an error message if met with an invalid orderby request", () => {
-        // controller: if (req.query.orderby !== asc / desc) goto error handling mddleware
-        // if (order !== "desc" || "asc") {
-        //   order = "desc";
-        // }
-        return request(app)
-          .get("/api/articles?order=invalid")
-          .expect(400)
-          .then(({ body: { msg } }) => {
-            expect(msg).to.equal("bad request");
-          });
-      });
-
       it("status 400: return an error message if met with an invalid sort_by request", () => {
         return request(app)
           .get("/api/articles?sort_by=invalid")

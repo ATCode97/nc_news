@@ -10,8 +10,8 @@ exports.addCommentByArticleId = (articleId, comment) => {
     .from("comments")
     .insert(newObj)
     .returning("*")
-    .then(res => {
-      return res[0];
+    .then(comment => {
+      return comment[0];
     });
 };
 
@@ -25,10 +25,7 @@ exports.fetchCommentByArticleId = (
     .leftJoin("articles", "comments.article_id", "=", "articles.article_id")
     .groupBy("comments.comment_id")
     .where("comments.article_id", "=", articleId)
-    .orderBy(sort_by, order)
-    .then(res => {
-      return res;
-    });
+    .orderBy(sort_by, order);
 };
 
 exports.updateCommentById = (commentId, votes) => {
@@ -38,14 +35,14 @@ exports.updateCommentById = (commentId, votes) => {
     .where("comments.comment_id", "=", commentId)
     .increment("votes", votes)
     .returning("*")
-    .then(res => {
-      if (res.length === 0) {
+    .then(comment => {
+      if (comment.length === 0) {
         return Promise.reject({
           status: 404,
           msg: "comment_id for update doesn't exist"
         });
       }
-      return res[0];
+      return comment[0];
     });
 };
 
