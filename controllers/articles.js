@@ -1,10 +1,11 @@
 const {
   fetchArticleById,
   updateArticleById,
-  addCommentToArticle,
-  fetchCommentByArticleId,
   fetchAllArticles
 } = require("../models/articles");
+
+const { checkIfAuthorExists } = require("../models/users");
+const { checkIfTopicExists } = require("../models/topics");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id: articleId } = req.params;
@@ -26,29 +27,13 @@ exports.patchArticleById = (req, res, next) => {
     .catch(next);
 };
 
-exports.postCommentByArticleId = (req, res, next) => {
-  const { article_id: id } = req.params;
-  const { body } = req;
-  addCommentToArticle(id, body)
-    .then(comment => {
-      res.status(201).send({ comment });
-    })
-    .catch(next);
-};
-
-exports.getCommentByArticleId = (req, res, next) => {
-  const { article_id: id } = req.params;
-
-  fetchCommentByArticleId(id, req.query)
-    .then(comments => {
-      res.status(200).send({ comments });
-    })
-    .catch(next);
-};
-
 exports.getAllArticles = (req, res, next) => {
-  fetchAllArticles(req.query)
-    .then(articles => {
+  Promise.all([
+    fetchAllArticles(req.query),
+    checkIfAuthorExists(req.query),
+    checkIfTopicExists(req.query)
+  ])
+    .then(([articles]) => {
       res.status(200).send({ articles });
     })
     .catch(next);

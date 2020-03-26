@@ -18,7 +18,7 @@ describe("/api", () => {
       });
   });
   describe("/topics", () => {
-    describe("GET methods", () => {
+    describe.only("GET methods", () => {
       it("status 200: response object is an object in an array with the correct key and array has the correct length", () => {
         return request(app)
           .get("/api/topics")
@@ -196,7 +196,7 @@ describe("/api", () => {
           .get("/api/articles?author=butter_bridge")
           .expect(200)
           .then(({ body: { articles } }) => {
-            expect(articles.length).to.equal(3);
+            expect(articles).to.have.length(3);
             articles.forEach(article => {
               expect(article.author).to.equal("butter_bridge");
             });
@@ -207,12 +207,57 @@ describe("/api", () => {
           .get("/api/articles?topic=mitch")
           .expect(200)
           .then(({ body: { articles } }) => {
-            expect(articles.length).to.equal(11);
+            expect(articles).to.have.length(11);
             articles.forEach(article => {
               expect(article.topic).to.equal("mitch");
             });
           });
       });
+      it("status 200: author exists but doesn't have articles associated to it", () => {
+        return request(app)
+          .get("/api/articles?author=lurker")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.have.length(0);
+          });
+      });
+      it("status 404: valid query BUT username doesn't exist", () => {
+        return request(app)
+          .get("/api/articles?author=buzz97")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("author doesn't exist");
+          });
+      });
+      it("status 200: topic exists but doesn't have articles associated to it", () => {
+        return request(app)
+          .get("/api/articles?topic=paper")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.have.length(0);
+          });
+      });
+      it("status 404: valid query BUT topic doesn't exist", () => {
+        return request(app)
+          .get("/api/articles?topic=toystory")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("topic doesn't exist");
+          });
+      });
+      xit("status 400: return an error message if met with an invalid orderby request", () => {
+        // controller: if (req.query.orderby !== asc / desc) goto error handling mddleware
+        // if (order !== "desc" || "asc") {
+        //   order = "desc";
+        // }
+        return request(app)
+          .get("/api/articles?order=invalid")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("bad request");
+          });
+      });
+
       it("status 400: return an error message if met with an invalid sort_by request", () => {
         return request(app)
           .get("/api/articles?sort_by=invalid")
@@ -221,16 +266,6 @@ describe("/api", () => {
             expect(msg).to.equal("bad request");
           });
       });
-      xit("status 400: return an error message if met with an invalid order request", () => {
-        return request(app)
-          .get("/api/articles?order=invalid")
-          .expect(400)
-          .then(({ body: { msg } }) => {
-            expect(msg).to.equal("bad request");
-          });
-      });
-      xit("status 404: author or topic that doesn't exist", () => {}); // one that doesn't clash with author that hasnt written?
-      xit("status 200 for giving back an empty array", () => {}); //this clashes with the test above
     });
     describe("invalid methods", () => {
       it("status 405: methods not allowed", () => {
@@ -497,7 +532,7 @@ describe("/api", () => {
                 expect(comments).to.be.ascendingBy("created_at");
               });
           });
-          it.only("status 200: empty array because article has no comments", () => {
+          it("status 200: empty array because article has no comments", () => {
             return request(app)
               .get("/api/articles/2/comments")
               .expect(200)
@@ -505,7 +540,7 @@ describe("/api", () => {
                 expect(comments).to.have.length(0);
               });
           });
-          it.only("status 404: valid article_id request, BUT it doesn't exist ", () => {
+          it("status 404: valid article_id request, BUT it doesn't exist ", () => {
             return request(app)
               .get("/api/articles/50/comments")
               .expect(404)
@@ -625,7 +660,6 @@ describe("/api", () => {
             });
         });
         it("status 404: valid comment_id request BUT it doesn't exist", () => {
-          //incomplete
           return request(app)
             .delete("/api/comments/999999")
             .expect(404)

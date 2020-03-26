@@ -15,3 +15,19 @@ exports.fetchUserByUsername = username => {
       return res[0];
     });
 };
+
+exports.checkIfAuthorExists = ({ author }) => {
+  if (author) {
+    return connection("users")
+      .first()
+      .where("users.username", "=", author)
+      .then(res => {
+        if (res === undefined) {
+          return Promise.reject({
+            status: 404,
+            msg: "author doesn't exist"
+          });
+        }
+      });
+  }
+};

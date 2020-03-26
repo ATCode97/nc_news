@@ -53,9 +53,9 @@ exports.removeCommentById = commentId => {
   return connection
     .from("comments")
     .where("comments.comment_id", "=", commentId)
-    .then(res => {
-      if (res.length === 0) {
-        //not ready, need to compare to the delete count not the array length
+    .del()
+    .then(deleteCount => {
+      if (deleteCount === 0) {
         return Promise.reject({
           status: 404,
           msg: "comment_id for delete doesn't exist"

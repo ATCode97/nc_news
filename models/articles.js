@@ -8,14 +8,14 @@ exports.fetchArticleById = articleId => {
     .leftJoin("comments", "articles.article_id", "comments.article_id")
     .groupBy("articles.article_id")
     .where("articles.article_id", "=", articleId)
-    .then(res => {
-      if (res.length === 0) {
+    .then(article => {
+      if (article.length === 0) {
         return Promise.reject({
           status: 404,
           msg: "article_id doesn't exist"
         });
       }
-      return res[0];
+      return article[0];
     });
 };
 
@@ -26,14 +26,14 @@ exports.updateArticleById = (articleId, newVotes) => {
     .where("articles.article_id", "=", articleId)
     .increment("votes", newVotes)
     .returning("*")
-    .then(res => {
-      if (res.length === 0) {
+    .then(article => {
+      if (article.length === 0) {
         return Promise.reject({
           status: 404,
           msg: "article for update, doesn't exist"
         });
       }
-      return res[0];
+      return article[0];
     });
 };
 
@@ -43,10 +43,6 @@ exports.fetchAllArticles = ({
   author,
   topic
 }) => {
-  // if (order !== "desc" || "asc") {
-  //   order = "desc";
-  // }
-
   return connection
     .select("articles.*")
     .from("articles")
@@ -57,9 +53,6 @@ exports.fetchAllArticles = ({
     .modify(query => {
       if (author) query.where("articles.author", "=", author);
       if (topic) query.where("articles.topic", "=", topic);
-    })
-    .then(res => {
-      return res;
     });
 };
 
@@ -67,8 +60,8 @@ exports.checkIfArticleIdExist = article_id => {
   return connection("articles")
     .first()
     .where({ article_id })
-    .then(res => {
-      if (res === undefined)
+    .then(article => {
+      if (article === undefined)
         return Promise.reject({
           status: 404,
           msg: "article_id doesn't exist"
