@@ -37,48 +37,6 @@ exports.updateArticleById = (articleId, newVotes) => {
     });
 };
 
-exports.addCommentToArticle = (articleId, comment) => {
-  const newObj = {};
-  newObj.author = comment.username;
-  newObj.body = comment.body;
-  newObj.article_id = articleId;
-
-  return connection
-    .from("comments")
-    .insert(newObj)
-    .returning("*")
-    .then(res => {
-      return res[0];
-    });
-};
-
-exports.fetchCommentByArticleId = (
-  articleId,
-  { sort_by = "created_at", order = "desc" }
-) => {
-  return connection
-    .select("comments.*")
-    .from("comments")
-    .leftJoin("articles", "comments.article_id", "=", "articles.article_id")
-    .groupBy("comments.comment_id")
-    .where("comments.article_id", "=", articleId)
-    .orderBy(sort_by, order)
-    .then(res => {
-      if (res.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: "article_id doesn't exist"
-        });
-      }
-      return res;
-    });
-};
-
-// SELECT comments.* FROM comments
-// LEFT JOIN articles
-//ON comments.article_id = articles.article_id
-// GROUP BY comments.comment_id;
-
 exports.fetchAllArticles = ({
   sort_by = "created_at",
   order = "desc",
@@ -102,5 +60,18 @@ exports.fetchAllArticles = ({
     })
     .then(res => {
       return res;
+    });
+};
+
+exports.checkIfArticleIdExist = article_id => {
+  return connection("articles")
+    .first()
+    .where({ article_id })
+    .then(res => {
+      if (res === undefined)
+        return Promise.reject({
+          status: 404,
+          msg: "article_id doesn't exist"
+        });
     });
 };

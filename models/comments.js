@@ -1,5 +1,36 @@
 const connection = require("../connection");
 
+exports.addCommentByArticleId = (articleId, comment) => {
+  const newObj = {};
+  newObj.author = comment.username;
+  newObj.body = comment.body;
+  newObj.article_id = articleId;
+
+  return connection
+    .from("comments")
+    .insert(newObj)
+    .returning("*")
+    .then(res => {
+      return res[0];
+    });
+};
+
+exports.fetchCommentByArticleId = (
+  articleId,
+  { sort_by = "created_at", order = "desc" }
+) => {
+  return connection
+    .select("comments.*")
+    .from("comments")
+    .leftJoin("articles", "comments.article_id", "=", "articles.article_id")
+    .groupBy("comments.comment_id")
+    .where("comments.article_id", "=", articleId)
+    .orderBy(sort_by, order)
+    .then(res => {
+      return res;
+    });
+};
+
 exports.updateCommentById = (commentId, votes) => {
   return connection
     .select("*")
@@ -21,5 +52,14 @@ exports.updateCommentById = (commentId, votes) => {
 exports.removeCommentById = commentId => {
   return connection
     .from("comments")
-    .where("comments.comment_id", "=", commentId);
+    .where("comments.comment_id", "=", commentId)
+    .then(res => {
+      if (res.length === 0) {
+        //not ready, need to compare to the delete count not the array length
+        return Promise.reject({
+          status: 404,
+          msg: "comment_id for delete doesn't exist"
+        });
+      }
+    });
 };

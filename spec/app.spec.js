@@ -229,7 +229,8 @@ describe("/api", () => {
             expect(msg).to.equal("bad request");
           });
       });
-      xit("status 400: author or topic that doesn't exist", () => {}); // one that doesn't clash with author that hasnt written?
+      xit("status 404: author or topic that doesn't exist", () => {}); // one that doesn't clash with author that hasnt written?
+      xit("status 200 for giving back an empty array", () => {}); //this clashes with the test above
     });
     describe("invalid methods", () => {
       it("status 405: methods not allowed", () => {
@@ -496,20 +497,28 @@ describe("/api", () => {
                 expect(comments).to.be.ascendingBy("created_at");
               });
           });
+          it.only("status 200: empty array because article has no comments", () => {
+            return request(app)
+              .get("/api/articles/2/comments")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).to.have.length(0);
+              });
+          });
+          it.only("status 404: valid article_id request, BUT it doesn't exist ", () => {
+            return request(app)
+              .get("/api/articles/50/comments")
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("article_id doesn't exist");
+              });
+          });
           it("status 400: return an error message if met with an invalid sort_by request", () => {
             return request(app)
               .get("/api/articles/1/comments?sort_by=invalid")
               .expect(400)
               .then(({ body: { msg } }) => {
                 expect(msg).to.equal("bad request");
-              });
-          });
-          it("status 404: valid article_id request, BUT it doesn't exist ", () => {
-            return request(app)
-              .get("/api/articles/50/comments")
-              .expect(404)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal("article_id doesn't exist");
               });
           });
         });
@@ -583,7 +592,7 @@ describe("/api", () => {
               expect(comment.votes).to.equals(15);
             });
         });
-        it("status 404: valid comment_id request, BUT it doesn't exist", () => {
+        it("status 404: valid comment_id request BUT it doesn't exist", () => {
           return request(app)
             .patch("/api/comments/999999")
             .expect(404)
@@ -606,6 +615,23 @@ describe("/api", () => {
           return request(app)
             .delete("/api/comments/2")
             .expect(204);
+        });
+        it("status 400: invalid datatype for comments_id", () => {
+          return request(app)
+            .delete("/api/comments/invalid")
+            .expect(400)
+            .expect(({ body: { msg } }) => {
+              expect(msg).to.equal("bad request");
+            });
+        });
+        it("status 404: valid comment_id request BUT it doesn't exist", () => {
+          //incomplete
+          return request(app)
+            .delete("/api/comments/999999")
+            .expect(404)
+            .expect(({ body: { msg } }) => {
+              expect(msg).to.equal("comment_id for delete doesn't exist");
+            });
         });
       });
       describe("invalid methods", () => {

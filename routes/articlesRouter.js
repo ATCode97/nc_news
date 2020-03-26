@@ -2,10 +2,14 @@ const articlesRouter = require("express").Router();
 const {
   getArticleById,
   patchArticleById,
-  postCommentByArticleId,
-  getCommentByArticleId,
   getAllArticles
 } = require("../controllers/articles");
+
+const {
+  postCommentByArticleId,
+  getCommentByArticleId
+} = require("../controllers/comments");
+
 const { handles405s } = require("../errors");
 
 articlesRouter
