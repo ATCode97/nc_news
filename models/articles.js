@@ -19,7 +19,7 @@ exports.fetchArticleById = articleId => {
     });
 };
 
-exports.updateArticleById = (articleId, newVotes) => {
+exports.updateArticleById = (articleId, newVotes = 0) => {
   return connection
     .select("*")
     .from("articles")

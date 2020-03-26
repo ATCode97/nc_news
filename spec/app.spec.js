@@ -17,6 +17,20 @@ describe("/api", () => {
         expect(msg).to.equal("invalid pathway");
       });
   });
+  describe("invalids methods", () => {
+    it("status 405: methods not allowed", () => {
+      const invalidMethods = ["delete"];
+      const promiseArray = invalidMethods.map(method => {
+        return request(app)
+          [method]("/api/users")
+          .expect(405)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("method not allowed");
+          });
+      });
+      return Promise.all(promiseArray);
+    });
+  });
   describe("/topics", () => {
     describe("GET methods", () => {
       it("status 200: response object is an object in an array with the correct key and array has the correct length", () => {
@@ -341,16 +355,16 @@ describe("/api", () => {
         });
         it("status 200: the request body is empty the response wouldn't change", () => {
           return request(app)
-            .patch("/api/articles/2")
+            .patch("/api/articles/1")
             .send({})
             .expect(200)
             .then(({ body: { article } }) => {
-              expect(article.votes).to.equals(1);
+              expect(article.votes).to.equals(100);
             });
         });
         it("status 404: valid article_id request, BUT it doesn't exist", () => {
           return request(app)
-            .patch("/api/articles/999999")
+            .patch("/api/articles/99")
             .expect(404)
             .expect(({ body: { msg } }) => {
               expect(msg).to.equal("article for update, doesn't exist");
@@ -391,7 +405,7 @@ describe("/api", () => {
                 body: "buzz light year to the rescue"
               })
               .expect(201)
-              .expect(({ body: { comment } }) => {
+              .then(({ body: { comment } }) => {
                 expect(comment.comment_id).to.equal(19);
                 expect(comment.author).to.equal("icellusedkars");
                 expect(comment.article_id).to.equal(2);
@@ -409,7 +423,7 @@ describe("/api", () => {
                 body: "buzz light year to the rescue",
                 void: "void"
               })
-              .expect(({ body: { comment } }) => {
+              .then(({ body: { comment } }) => {
                 expect(comment.comment_id).to.equal(19);
                 expect(comment.author).to.equal("icellusedkars");
                 expect(comment.article_id).to.equal(2);
@@ -418,6 +432,18 @@ describe("/api", () => {
                 expect(comment).to.contain.keys("created_at");
               });
           });
+          it("status 400: the send body is missing a key", () => {
+            return request(app)
+              .post("/api/articles/2/comments")
+              .send({
+                username: "icellusedkars"
+              })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("bad request");
+              });
+          });
+
           it("status 400: the article id in path isn't a valid data type", () => {
             return request(app)
               .post("/api/articles/invalid/comments")
@@ -426,7 +452,7 @@ describe("/api", () => {
                 body: "buzz light year to the rescue"
               })
               .expect(400)
-              .expect(({ body: { msg } }) => {
+              .then(({ body: { msg } }) => {
                 expect(msg).to.equal("bad request");
               });
           });
@@ -438,7 +464,7 @@ describe("/api", () => {
                 username: 999,
                 body: "buzz light year to the rescue"
               })
-              .expect(({ body: { msg } }) => {
+              .then(({ body: { msg } }) => {
                 expect(msg).to.equal("unprocessable entity");
               });
           });
@@ -450,7 +476,7 @@ describe("/api", () => {
                 body: "buzz light year to the rescue"
               })
               .expect(422)
-              .expect(({ body: { msg } }) => {
+              .then(({ body: { msg } }) => {
                 expect(msg).to.equal("unprocessable entity");
               });
           });
@@ -613,6 +639,17 @@ describe("/api", () => {
             .then(({ body: { comment } }) => {
               expect(comment.votes).to.equals(15);
             });
+        });
+        it("status 200: inc_vote will default to 0 when its not specified in the send body", () => {
+          it("status 200: will successfully patch despite the body have more than one key", () => {
+            return request(app)
+              .patch("/api/comments/2")
+              .send({ name: "mitch" })
+              .expect(200)
+              .then(({ body: { comment } }) => {
+                expect(comment.votes).to.equals(14);
+              });
+          });
         });
         it("status 404: valid comment_id request BUT it doesn't exist", () => {
           return request(app)
