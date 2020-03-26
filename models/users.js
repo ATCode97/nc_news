@@ -4,7 +4,7 @@ exports.fetchUserByUsername = username => {
   return connection
     .select("*")
     .from("users")
-    .where("users.username", "=", username)
+    .where({ username })
     .then(username => {
       if (username.length === 0) {
         return Promise.reject({

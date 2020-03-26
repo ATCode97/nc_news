@@ -24,7 +24,7 @@ describe("/api", () => {
           .get("/api/topics")
           .expect(200)
           .then(({ body: { topics } }) => {
-            expect(topics.length).to.equal(3);
+            expect(topics).to.have.length(3);
             expect(topics[0]).to.be.an("object");
             expect(topics[0]).to.contains.keys("slug", "description");
           });
@@ -106,7 +106,7 @@ describe("/api", () => {
           .get("/api/articles")
           .expect(200)
           .then(({ body: { articles } }) => {
-            expect(articles.length).to.equal(12);
+            expect(articles).to.have.length(12);
             expect(articles[0]).to.contain.keys(
               "author",
               "title",
@@ -461,7 +461,7 @@ describe("/api", () => {
               .get("/api/articles/1/comments")
               .expect(200)
               .then(({ body: { comments } }) => {
-                expect(comments.length).to.equal(13);
+                expect(comments).to.have.length(13);
                 expect(comments[0]).to.contain.keys(
                   "comment_id",
                   "votes",

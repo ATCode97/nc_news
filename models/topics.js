@@ -3,6 +3,7 @@ const connection = require("../connection");
 exports.fetchAllTopics = () => {
   return connection.select("*").from("topics");
 };
+
 exports.checkIfTopicExists = ({ topic }) => {
   if (topic) {
     return connection("topics")

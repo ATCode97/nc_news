@@ -16,7 +16,7 @@ exports.addCommentByArticleId = (articleId, comment) => {
 };
 
 exports.fetchCommentByArticleId = (
-  articleId,
+  article_id,
   { sort_by = "created_at", order = "desc" }
 ) => {
   return connection
@@ -24,15 +24,15 @@ exports.fetchCommentByArticleId = (
     .from("comments")
     .leftJoin("articles", "comments.article_id", "=", "articles.article_id")
     .groupBy("comments.comment_id")
-    .where("comments.article_id", "=", articleId)
+    .where("comments.article_id", "=", article_id)
     .orderBy(sort_by, order);
 };
 
-exports.updateCommentById = (commentId, votes) => {
+exports.updateCommentById = (comment_id, votes) => {
   return connection
     .select("*")
     .from("comments")
-    .where("comments.comment_id", "=", commentId)
+    .where({ comment_id })
     .increment("votes", votes)
     .returning("*")
     .then(comment => {
@@ -46,10 +46,10 @@ exports.updateCommentById = (commentId, votes) => {
     });
 };
 
-exports.removeCommentById = commentId => {
+exports.removeCommentById = comment_id => {
   return connection
     .from("comments")
-    .where("comments.comment_id", "=", commentId)
+    .where({ comment_id })
     .del()
     .then(deleteCount => {
       if (deleteCount === 0) {
