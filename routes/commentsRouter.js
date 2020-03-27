@@ -3,14 +3,14 @@ const {
   patchCommentById,
   deleteCommentById
 } = require("../controllers/comments");
-const { handles405s } = require("../errors");
+const { handle405s } = require("../errors");
 
-commentsRouter.route("/").all(handles405s);
+commentsRouter.route("/").all(handle405s);
 
 commentsRouter
   .route("/:comment_id")
   .patch(patchCommentById)
   .delete(deleteCommentById)
-  .all(handles405s);
+  .all(handle405s);
 
 module.exports = commentsRouter;

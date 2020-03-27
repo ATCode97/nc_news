@@ -1,5 +1,5 @@
 process.env.NODE_ENV = "test";
-const connection = require("../connection");
+const connection = require("../db/connection");
 const app = require("../app");
 const request = require("supertest");
 const chai = require("chai");
@@ -312,7 +312,7 @@ describe("/api", () => {
           return request(app)
             .get("/api/articles/999999")
             .expect(404)
-            .expect(({ body: { msg } }) => {
+            .then(({ body: { msg } }) => {
               expect(msg).to.equal("article_id doesn't exist");
             });
         });
@@ -320,7 +320,7 @@ describe("/api", () => {
           return request(app)
             .get("/api/articles/invalid")
             .expect(400)
-            .expect(({ body: { msg } }) => {
+            .then(({ body: { msg } }) => {
               expect(msg).to.equal("bad request");
             });
         });
@@ -366,7 +366,8 @@ describe("/api", () => {
           return request(app)
             .patch("/api/articles/99")
             .expect(404)
-            .expect(({ body: { msg } }) => {
+            .send({ inc_votes: 6, name: "mitch" })
+            .then(({ body: { msg } }) => {
               expect(msg).to.equal("article for update, doesn't exist");
             });
         });
@@ -375,7 +376,7 @@ describe("/api", () => {
             .patch("/api/articles/2")
             .send({ inc_votes: "abc" })
             .expect(400)
-            .expect(({ body: { msg } }) => {
+            .then(({ body: { msg } }) => {
               expect(msg).to.equal("bad request");
             });
         });
