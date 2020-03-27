@@ -28,7 +28,7 @@ exports.fetchCommentByArticleId = (
     .orderBy(sort_by, order);
 };
 
-exports.updateCommentById = (comment_id, votes) => {
+exports.updateCommentById = (comment_id, votes = 0) => {
   return connection
     .select("*")
     .from("comments")

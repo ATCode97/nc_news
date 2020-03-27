@@ -17,12 +17,12 @@ describe("/api", () => {
         expect(msg).to.equal("invalid pathway");
       });
   });
-  describe("invalids methods", () => {
+  describe.only("invalids methods", () => {
     it("status 405: methods not allowed", () => {
       const invalidMethods = ["delete"];
       const promiseArray = invalidMethods.map(method => {
         return request(app)
-          [method]("/api/users")
+          [method]("/api")
           .expect(405)
           .then(({ body: { msg } }) => {
             expect(msg).to.equal("method not allowed");
@@ -353,7 +353,7 @@ describe("/api", () => {
               expect(article.votes).to.equals(6);
             });
         });
-        it("status 200: the request body is empty the response wouldn't change", () => {
+        it("status 200: vote been defaulted to 0 so if the request body is empty the response wouldn't change", () => {
           return request(app)
             .patch("/api/articles/1")
             .send({})
@@ -632,13 +632,13 @@ describe("/api", () => {
               expect(comment.votes).to.equals(24);
             });
         });
-        it("status 200: the request body is empty the response wouldn't change", () => {
+        it("status 200:vote been defaulted to 0, so if the request body is empty the response wouldn't change", () => {
           return request(app)
-            .patch("/api/comments/2")
+            .patch("/api/comments/1")
             .send({})
             .expect(200)
             .then(({ body: { comment } }) => {
-              expect(comment.votes).to.equals(15);
+              expect(comment.votes).to.equals(16);
             });
         });
         it("status 200: inc_vote will default to 0 when its not specified in the send body", () => {
