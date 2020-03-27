@@ -60,9 +60,19 @@ describe("/api", () => {
     });
   });
   describe("/users", () => {
+    describe("GET methods", () => {
+      it("status 200: for successfully get all usernames", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then(({ body: { users } }) => {
+            expect(users).to.have.length(6);
+          });
+      });
+    });
     describe("invalids methods", () => {
       it("status 405: methods not allowed", () => {
-        const invalidMethods = ["get", "post", "delete", "put", "patch"];
+        const invalidMethods = ["post", "delete", "put", "patch"];
         const promiseArray = invalidMethods.map(method => {
           return request(app)
             [method]("/api/users")
