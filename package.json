@@ -12,7 +12,11 @@
     "seed-test": "NODE_ENV=test knex seed:run",
     "test-utils": "mocha spec/utils.spec.js",
     "test": "mocha spec/app.spec.js",
-    "find-logs": "grep -R --line-number console.log ./ --exclude-dir node_modules"
+    "find-logs": "grep -R --line-number console.log ./ --exclude-dir node_modules",
+    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) knex seed:run",
+    "migrate-latest:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) knex migrate:latest",
+    "migrate-rollback:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) knex migrate:rollback",
+    "start": "node listen.js"
   },
   "repository": {
     "type": "git",

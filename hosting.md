@@ -70,19 +70,19 @@ If you are in your app's directory, and the database is correctly linked as an a
 At the top of your `knexfile.js`, add the following line of code:
 
 ```js
-const { DB_URL } = process.env;
+const { DATABASE_URL } = process.env;
 ```
 
 Then add a `production` key to the `customConfigs` object:
 
 ```js
-const { DB_URL } = process.env;
+const { DATABASE_URL } = process.env;
 // ...
 const customConfigs = {
   // ...
   production: {
-    connection: `${DB_URL}?ssl=true`,
-  },
+    connection: `${DATABASE_URL}?ssl=true`
+  }
 };
 // ...
 ```
@@ -102,9 +102,9 @@ In your `package.json`, add the following keys to the scripts:
 ```json
 {
   "scripts": {
-    "seed:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex seed:run",
-    "migrate-latest:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:latest",
-    "migrate-rollback:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:rollback"
+    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) knex seed:run",
+    "migrate-latest:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) knex migrate:latest",
+    "migrate-rollback:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) knex migrate:rollback"
   }
 }
 ```
@@ -117,6 +117,7 @@ Make sure to **run the seed prod script** from your `package.json`:
 npm run seed:prod
 ```
 
+<!--
 ## 6. Connect To The Hosted Database when on Heroku
 
 Change your connection file to look something like this:
@@ -133,7 +134,7 @@ const dbConfig =
 module.exports = knex(dbConfig);
 ```
 
-It should check whether you're in production, and if you are, it should connect to the production database. Otherwise it will connect to the (`.gitignore`'d) knex file.
+It should check whether you're in production, and if you are, it should connect to the production database. Otherwise it will connect to the (`.gitignore`'d) knex file. -->
 
 ## 7. Use Heroku's PORT
 

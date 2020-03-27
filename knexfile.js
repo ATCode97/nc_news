@@ -1,3 +1,4 @@
+const { DATABASE_URL } = process.env;
 const ENV = process.env.NODE_ENV || "development";
 
 console.log(`Currently running in ${ENV} environment`);
@@ -26,6 +27,9 @@ const customConfig = {
       // user,
       // password
     }
+  },
+  production: {
+    connection: `${DATABASE_URL}?ssl=true`
   }
 };
 
