@@ -17,7 +17,7 @@ describe("/api", () => {
         expect(msg).to.equal("invalid pathway");
       });
   });
-  describe.only("invalids methods", () => {
+  describe("invalids methods", () => {
     it("status 405: methods not allowed", () => {
       const invalidMethods = ["delete"];
       const promiseArray = invalidMethods.map(method => {
@@ -433,9 +433,9 @@ describe("/api", () => {
                 expect(comment).to.contain.keys("created_at");
               });
           });
-          it("status 400: the send body is missing a key", () => {
+          it("status 400: the send body is missing a body key", () => {
             return request(app)
-              .post("/api/articles/2/comments")
+              .post("/api/articles/1/comments")
               .send({
                 username: "icellusedkars"
               })
@@ -444,7 +444,17 @@ describe("/api", () => {
                 expect(msg).to.equal("bad request");
               });
           });
-
+          it("status 400: the send body is missing a username key", () => {
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send({
+                body: "buzz light year to the rescue"
+              })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("bad request");
+              });
+          });
           it("status 400: the article id in path isn't a valid data type", () => {
             return request(app)
               .post("/api/articles/invalid/comments")
