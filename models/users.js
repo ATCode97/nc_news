@@ -31,3 +31,7 @@ exports.checkIfAuthorExists = ({ author }) => {
       });
   }
 };
+
+exports.fetchAllUsers = () => {
+  return connection.select("*").from("users");
+};

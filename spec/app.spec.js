@@ -66,7 +66,8 @@ describe("/api", () => {
           .get("/api/users")
           .expect(200)
           .then(({ body: { users } }) => {
-            expect(users).to.have.length(6);
+            expect(users).to.have.length(4);
+            expect(users[0]).to.contains.keys("username", "avatar_url", "name");
           });
       });
     });
