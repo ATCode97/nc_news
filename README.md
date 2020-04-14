@@ -6,8 +6,12 @@ Hosted on heroku at https://northcodersnews2020.herokuapp.com/
 
 ## Setup
 
+In order to use this repo you first need to clone this repo off github and cd in your desired
+
 ```
-npm install
+first, cd in to the directory you want this repo in and git clone <your forked repo's-url>
+second, cd in to the file
+once you in the repo you need to run npm install to get all the dependencies
 ```
 
 ## Available Endpoints for GET All
@@ -31,11 +35,9 @@ This endpoint can take in the following queries:
 - `author`, which filters the articles by the username value specified in the query
 - `topic`, which filters the articles by the topic value specified in the query
 
-### Users -/api/users to be COMPLETED
+### Users -/api/users
 
 Responds with an array of objects that contains users on a key of [users](https://northcodersnews2020.herokuapp.com/api/users)
-
-https://northcodersnews2020.herokuapp.com/api/users
 
 ## Available Endpoints - Users
 
